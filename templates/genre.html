@@ -1,0 +1,25 @@
+{% extends "base3.html" %}
+
+{% block title %}{{ genre.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ genre.name }}</h2>
+{% for row in rows %}
+    <div class="book-row">
+        {% for book in row %}
+            <div class="book-item">
+                <img src="{{ book['img_src'] }}" alt="{{ book['book_title'] }}">
+                <h3><a href="/{{ book['book_id'] }}">{{ book['book_title'] }}</a></h3>
+                <p>Price: ${{ book['price'] }}</p>
+                <p>Ratings: {{ book['ratings'] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+<a href="{{ url_for('index') }}">Back to Genres</a>
+{% endblock %}
+
+
+
+
+

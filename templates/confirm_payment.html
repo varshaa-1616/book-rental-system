@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+</head>
+<body>
+    
+    <div class="container">
+        <h2>Payment Confirmation</h2>
+        <h3>{{ strong }}</h3>
+        <form action="{{ url_for('confirm_payment') }}" method="POST">
+            <label for="transaction_id">Transaction ID:</label><br>
+            <input type="number" id="transaction_id" name="transaction_id" required><br>
+
+            <label for="amount">Amount:</label><br>
+            <input type="number" id="amount" name="amount" step="0.01" required><br>
+
+            <label for="payee_name">Payee Name:</label><br>
+            <input type="text" id="payee_name" name="payee_name" required><br>
+
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br>
+
+            <input type="submit" value="Submit Payment">
+            
+        </form>
+        <!-- <a href="/thank_you.html"></a> -->
+    </div>    
+</body>
+</html>
+
+
+
+

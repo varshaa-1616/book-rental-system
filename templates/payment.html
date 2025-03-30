@@ -1,0 +1,21 @@
+
+{% extends "base.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<style>
+    .content{background-image: url(https://th.bing.com/th/id/OIP.6mM6HBD24NgiYPky6fy77QHaDt?rs=1&pid=ImgDetMain) }
+</style>
+<div class="content">
+    <h1 style="font-family: cursive; color: lightseagreen;">PAYMENT GATEWAY</h1>
+    <img align="right" src="{{url_for('static',filename='qr.png')}}" alt="QR" width="550" height="500"><br><br>
+    <p style="font-size: 20px;"><b>Book title:{{ booktitle }}</b></p><br><br>
+    <p style="font-size: 20px;"><b>Book price: {{ price }}</b></p><br><br>
+    <p style="font-size: 20px;"><b>Please pay to get the book</b></p><br><br>
+    
+    <a href="/confirm_payment.html"><input type="submit" value="Get book" id="s"></a><br><br>
+
+    
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+{% endblock %}

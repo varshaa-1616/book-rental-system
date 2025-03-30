@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<style>
+    .content{background-image: url(https://th.bing.com/th/id/OIP.6mM6HBD24NgiYPky6fy77QHaDt?rs=1&pid=ImgDetMain)
+</style>
+<div class="content">
+    
+    <h2>{{string}}</h2><br>
+    <h1 style="font-family: cursive; color: lightseagreen;">USER PROFILE UPDATE</h1><br>
+    <img align="right" src="{{url_for('static',filename='signin.png')}}" alt="QR" width="550" height="500"><br>
+    
+    <form action="/update_account.html" method='POST'>
+        <p style="font-size: 14pt;">Enter username:<input style = "height:50px;font-size: 14pt;" type="text" name="usern" id='usern' placeholder="Username"></p><br>
+        <p style="font-size: 14pt;">Enter old password:<input style = "height:50px;font-size: 14pt;" type="Password" name="passw" id="passw" placeholder="Password"></p><br>
+        <p style="font-size: 14pt;">Enter new password:<input style = "height:50px;font-size: 14pt;" type="Password" name="npass" id="npass" placeholder="Password"></p><br>
+        <p style="font-size: 14pt;">Enter new Email-id:<input style = "height:50px;font-size: 14pt;" type="email" name="nmail" id="nmail" placeholder="something@gmail.com"></p><br><br>
+        <input type="submit" value="Submit" id="s"><br><br>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+        
+    </head>
+    <body>
+        <!-- <h4><a href="/homepage.html">Go Back!</a></h4> -->
+        {{ strength }}
+        <h1> My Books: </h1>
+
+        {% block content %}
+        <div class="my-book">
+            {% for i in number %}
+                <p>
+                    <div class="book-rented">
+                        <img src="{{ book['img_src'][i] }}" alt="{{ book['book_title'][i] }}">
+                        <h3><a href="/{{ book['book_id'][i] }}">{{ book['book_title'][i] }}</a></h3>
+                        <p>Price: ${{ book['price'][i] }}</p>
+                        
+                    </div>
+                </p>
+                
+            {% endfor %}
+        </div>
+        
+        <a href="{{ url_for('index') }}">Explore More!</a>
+        {% endblock %}
+
+    </body>
+</html>
