@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #f8f9fa;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+main {
+    padding: 10px;
+}
+
+.book-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.book-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 23%;
+    text-align: center;
+}
+
+.book-item img {
+    max-width: 100%;
+    height: auto;
+}
+
+
