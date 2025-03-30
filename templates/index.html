@@ -1,0 +1,14 @@
+{% extends "base3.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Genres</h2>
+<ul>
+    {% for genre in genres %}
+        <li><a href="{{ url_for('genre_page', genre_name=genre['genre']) }}">{{ genre['genre'] }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+
