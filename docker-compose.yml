@@ -1,5 +1,19 @@
 services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DB_SSL_CA: /app/ca.pem
+      SSL_CERT_FILE: /app/ca.pem
+    volumes:
+      - ./ca.pem:/app/ca.pem:ro
+
   db:
+    profiles: ["local"]
     image: mysql:8
     restart: unless-stopped
     environment:
@@ -15,20 +29,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-
-  web:
-    build: .
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: books
-    depends_on:
-      db:
-        condition: service_healthy
 
 volumes:
   mysql_data:
