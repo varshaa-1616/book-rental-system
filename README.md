@@ -136,7 +136,7 @@ The GitHub Actions pipeline (`.github/workflows/ci-cd.yml`) runs on every **push
 | **build** | after test passes | Builds and inspects the Docker container image |
 | **deploy** | push to main only (conditional) | Deploys to Azure App Service when `AZURE_CREDENTIALS` & `AZURE_WEBAPP_NAME` secrets exist |
 
-### Azure Deployment Secrets (Optional)
+### Azure Deployment Secrets
 
 Configure in repository at **Settings → Secrets and variables → Actions**:
 
