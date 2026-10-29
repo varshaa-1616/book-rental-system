@@ -115,3 +115,4 @@ class TestThankYou:
         """GET /thank_you.html returns 200."""
         resp = client.get("/thank_you.html")
         assert resp.status_code == 200
+

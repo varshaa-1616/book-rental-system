@@ -52,3 +52,4 @@ def mock_cursor():
 def mock_connection():
     """Expose the shared mock connection."""
     return _mock_connection
+
