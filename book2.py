@@ -56,4 +56,3 @@ def masala(username):
                 # finally:
                 #     mycursor.close()
                 #     mydb.close()
-masala('aaa')
