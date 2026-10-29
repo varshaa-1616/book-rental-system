@@ -1,8 +1,8 @@
 # 📚 Book Rental System
 
-![CI/CD](https://github.com/<OWNER>/<REPO>/actions/workflows/ci-cd.yml/badge.svg)
+[![CI/CD](https://github.com/varshaa-1616/book-rental-system/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/varshaa-1616/book-rental-system/actions/workflows/ci-cd.yml)
 
-A Flask web application for browsing, renting, and managing books online, backed by MySQL.
+A Flask web application for browsing, renting, and managing books online, backed by MySQL (Aiven Cloud / Local).
 
 ---
 
@@ -16,22 +16,27 @@ flowchart LR
 
     subgraph Docker["Docker Compose"]
         Flask["Flask App\n(Gunicorn :8000)"]
-        MySQL["MySQL 8\n(:3306)"]
+    end
+
+    subgraph Database["MySQL Database"]
+        Aiven["Aiven Cloud MySQL\n(SSL / TLS :27853)"]
+        LocalDB["Local MySQL 8\n(--profile local)"]
     end
 
     subgraph CI["GitHub Actions"]
         Test["test"]
         Build["build"]
-        Deploy["deploy"]
+        Deploy["deploy (conditional)"]
         Test --> Build --> Deploy
     end
 
     subgraph Azure["Azure App Service"]
-        Prod["Production"]
+        Prod["Production Container"]
     end
 
     Browser --> Flask
-    Flask --> MySQL
+    Flask --> Aiven
+    Flask -.-> LocalDB
     Deploy --> Prod
 ```
 
@@ -57,28 +62,38 @@ flowchart LR
 ### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- A `.env` file configured with your MySQL connection details (copy from `.env.example`)
+- `ca.pem` in project root for SSL (if using cloud MySQL like Aiven)
 
-### Run
+### Run with Cloud Database (Aiven)
 
 ```bash
 # Clone the repository
-git clone https://github.com/<OWNER>/<REPO>.git
-cd bookrental
+git clone https://github.com/varshaa-1616/book-rental-system.git
+cd book-rental-system
 
-# Start the app + MySQL
-docker compose up --build
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your credentials
 
-# App is available at http://localhost:8000
+# Build and start the app
+docker compose up -d --build
+
+# App is live at http://localhost:8000
 ```
 
-> [!NOTE]
-> On first start MySQL needs ~30 s to initialize. The Flask container waits automatically via the healthcheck.
+### Run with Local MySQL Container
+
+```bash
+# Start both app and local MySQL service
+docker compose --profile local up -d --build
+```
 
 ### Stop
 
 ```bash
 docker compose down          # stop containers
-docker compose down -v       # stop + delete the MySQL data volume
+docker compose down -v       # stop + delete any volumes
 ```
 
 ---
@@ -90,7 +105,7 @@ docker compose down -v       # stop + delete the MySQL data volume
 pip install -r requirements.txt -r requirements-dev.txt
 
 # Run the test suite
-python -m pytest tests/ -v
+python -m pytest tests/ -v --tb=short
 ```
 
 Tests mock the database layer so **no running MySQL instance is required**.
@@ -105,8 +120,9 @@ Tests mock the database layer so **no running MySQL instance is required**.
 | `DB_USER` | `root` | MySQL username |
 | `DB_PASSWORD` | `root` | MySQL password |
 | `DB_NAME` | `books` | MySQL database name |
-
-Copy `.env.example` to `.env` and edit as needed for local development.
+| `DB_PORT` | `3306` | MySQL port (e.g. 27853 for Aiven) |
+| `DB_SSL_DISABLED` | `false` | Set to `true` for local MySQL without SSL |
+| `DB_SSL_CA` | `/app/ca.pem` | Path to CA certificate inside container |
 
 ---
 
@@ -116,28 +132,18 @@ The GitHub Actions pipeline (`.github/workflows/ci-cd.yml`) runs on every **push
 
 | Job | Trigger | What it does |
 |---|---|---|
-| **test** | push + PR | Spins up a MySQL 8 service container, installs deps, runs `pytest` |
-| **build** | after test passes | Builds the Docker image |
-| **deploy** | push to main only | Deploys to Azure App Service |
+| **test** | push + PR | Spins up an isolated MySQL service container, installs deps, runs `pytest` (10 tests) |
+| **build** | after test passes | Builds and inspects the Docker container image |
+| **deploy** | push to main only (conditional) | Deploys to Azure App Service when `AZURE_CREDENTIALS` & `AZURE_WEBAPP_NAME` secrets exist |
 
-### Required GitHub Secrets
+### Azure Deployment Secrets (Optional)
 
-You must create these in your repo at **Settings → Secrets and variables → Actions**:
+Configure in repository at **Settings → Secrets and variables → Actions**:
 
-| Secret | How to obtain |
+| Secret | Description |
 |---|---|
-| `AZURE_CREDENTIALS` | Create a service principal: `az ad sp create-for-rbac --name "bookrental-sp" --role contributor --scopes /subscriptions/<SUB_ID>/resourceGroups/<RG> --sdk-auth`. Paste the full JSON output. |
-| `AZURE_WEBAPP_NAME` | The name of your Azure Web App (e.g. `bookrental-prod`) |
-
-### Azure resources to create (step by step)
-
-1. **Resource Group**: `az group create --name bookrental-rg --location eastus`
-2. **App Service Plan**: `az appservice plan create --name bookrental-plan --resource-group bookrental-rg --sku B1 --is-linux`
-3. **Web App** (container): `az webapp create --resource-group bookrental-rg --plan bookrental-plan --name bookrental-prod --deployment-container-image-name python:3.11-slim`
-4. **Azure Database for MySQL** (optional, if not bundling MySQL): Create via Azure Portal or CLI.
-5. **Service principal**: `az ad sp create-for-rbac --name "bookrental-sp" --role contributor --scopes /subscriptions/<SUB_ID>/resourceGroups/bookrental-rg --sdk-auth`
-6. Add the JSON output as the `AZURE_CREDENTIALS` secret in GitHub.
-7. Add the web app name (e.g. `bookrental-prod`) as the `AZURE_WEBAPP_NAME` secret.
+| `AZURE_CREDENTIALS` | Service principal credentials JSON output from `az ad sp create-for-rbac` |
+| `AZURE_WEBAPP_NAME` | Name of your Azure Web App |
 
 ---
 
@@ -145,24 +151,26 @@ You must create these in your repo at **Settings → Secrets and variables → A
 
 ```
 bookrental/
-├── app.py                  # Flask routes
-├── book1.py                # User DB operations (class DB)
+├── app.py                  # Flask routes & server logic
+├── book1.py                # User database operations (DB class)
 ├── book2.py                # Book queries (sugar, salt, masala)
 ├── book3.py                # Rental insertion (mub)
+├── ca.pem                  # Database CA certificate for SSL
 ├── requirements.txt        # Production dependencies
 ├── requirements-dev.txt    # Test dependencies
-├── Dockerfile              # Multi-layer Docker build
-├── docker-compose.yml      # Flask + MySQL orchestration
+├── Dockerfile              # Multi-stage Python 3.11-slim container build
+├── docker-compose.yml      # Orchestration (Web app + optional local MySQL profile)
 ├── .dockerignore
+├── .gitignore
 ├── .env.example            # Environment variable template
-├── static/                 # CSS, images
+├── static/                 # CSS stylesheets, images
 ├── templates/              # Jinja2 HTML templates
 ├── tests/
 │   ├── conftest.py         # Shared fixtures & DB mocking
-│   └── test_endpoints.py   # 10 endpoint tests
+│   └── test_endpoints.py   # 10 automated endpoint tests
 └── .github/
     └── workflows/
-        └── ci-cd.yml       # GitHub Actions pipeline
+        └── ci-cd.yml       # GitHub Actions CI/CD workflow
 ```
 
 ---
@@ -170,4 +178,3 @@ bookrental/
 ## License
 
 This project is for educational purposes.
-
