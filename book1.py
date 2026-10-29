@@ -1,11 +1,12 @@
+import os
 import mysql.connector
 
 class DB:
     mydb=mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="books")
+            host=os.environ.get('DB_HOST', 'localhost'),
+            user=os.environ.get('DB_USER', 'root'),
+            password=os.environ.get('DB_PASSWORD', 'root'),
+            database=os.environ.get('DB_NAME', 'books'))
     mycursor=mydb.cursor()
     @classmethod
     def add_data(cls,usern,passw,email):

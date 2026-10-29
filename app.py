@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect
 import mysql.connector
 from mysql.connector import Error
@@ -9,10 +10,10 @@ app = Flask(__name__)
 
 def get_db_connection():
     mydb = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        database='books'
+        host=os.environ.get('DB_HOST', 'localhost'),
+        user=os.environ.get('DB_USER', 'root'),
+        password=os.environ.get('DB_PASSWORD', 'root'),
+        database=os.environ.get('DB_NAME', 'books')
     )
     return mydb
 
