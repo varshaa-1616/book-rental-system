@@ -2,7 +2,7 @@ import os
 import mysql.connector
 
 def mub(transaction_id, amount, payee_name, username, password, book_name):
-    mydb = mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'))
+    mydb = mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'),port=int(os.environ.get('DB_PORT', '3306')),ssl_disabled=os.environ.get('DB_SSL_DISABLED', 'false').lower() == 'true')
     mycursor = mydb.cursor()
     
     sql="insert into rent (transaction_id, amount, payee_name, username, password, book_name, book_id, img_src) values (%s,%s,%s,%s, %s, %s, %s, %s)"

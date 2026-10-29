@@ -2,7 +2,7 @@ import os
 import mysql.connector
 
 def sugar(bookid):
-    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'))
+    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'),port=int(os.environ.get('DB_PORT', '3306')),ssl_disabled=os.environ.get('DB_SSL_DISABLED', 'false').lower() == 'true')
     mycursor=mydb.cursor()
     mycursor.execute(f"select * from book where book_id={int(bookid)}")
     myresult=mycursor.fetchall()
@@ -19,7 +19,7 @@ def sugar(bookid):
     return d
     
 def salt(title):
-    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'))
+    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'),port=int(os.environ.get('DB_PORT', '3306')),ssl_disabled=os.environ.get('DB_SSL_DISABLED', 'false').lower() == 'true')
     mycursor=mydb.cursor()
     mycursor.execute(f"select book_id from book where book_title={title}")
     myresult=mycursor.fetchall()
@@ -33,7 +33,7 @@ def salt(title):
 
 
 def masala(username):
-    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'))
+    mydb=mysql.connector.connect(host=os.environ.get('DB_HOST', 'localhost'),user=os.environ.get('DB_USER', 'root'),password=os.environ.get('DB_PASSWORD', 'root'),database=os.environ.get('DB_NAME', 'books'),port=int(os.environ.get('DB_PORT', '3306')),ssl_disabled=os.environ.get('DB_SSL_DISABLED', 'false').lower() == 'true')
     mycursor=mydb.cursor()
     mycursor.execute(f'SELECT book_name, amount, book_id, img_src FROM rent WHERE username="{username}"')
     mybooks = mycursor.fetchall()       

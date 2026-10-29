@@ -6,7 +6,9 @@ class DB:
             host=os.environ.get('DB_HOST', 'localhost'),
             user=os.environ.get('DB_USER', 'root'),
             password=os.environ.get('DB_PASSWORD', 'root'),
-            database=os.environ.get('DB_NAME', 'books'))
+            database=os.environ.get('DB_NAME', 'books'),
+            port=int(os.environ.get('DB_PORT', '3306')),
+            ssl_disabled=os.environ.get('DB_SSL_DISABLED', 'false').lower() == 'true')
     mycursor=mydb.cursor()
     @classmethod
     def add_data(cls,usern,passw,email):
